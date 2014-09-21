@@ -469,11 +469,13 @@ class BackendIMAP extends BackendDiff implements ISearchProvider {
             $wastebaskt = @imap_getmailboxes($this->mbox, $this->server, "Trash");
             if (isset($wastebaskt[0])) {
                 $this->wasteID = $this->convertImapId(substr($wastebaskt[0]->name, strlen($this->server)));
+                ZLog::Write(LOGLEVEL_INFO, sprintf("SDB: the wastebasket ID is '%s')", $this->wasteID));
                 return $this->wasteID;
             }
             //try get waste id from hierarchy if it wasn't possible with above for some reason
             $this->GetHierarchy();
         }
+        ZLog::Write(LOGLEVEL_INFO, sprintf("SDB: had to traverse hierarchy - the wastebasket ID is '%s')", $this->wasteID));
         return $this->wasteID;
     }
 
@@ -675,9 +677,13 @@ class BackendIMAP extends BackendDiff implements ISearchProvider {
 
                 if ($notExcluded) {
                     $box = array();
+
                     // cut off serverstring
                     $imapid = substr($val->name, strlen($this->server));
                     $box["id"] = $this->convertImapId($imapid);
+
+                    ZLog::Write(LOGLEVEL_DEBUG, sprintf("SDB: In GetFolderList: Imapid is '%s' - Val->name is '%s'", $imapid, $val->name));
+                    ZLog::Write(LOGLEVEL_DEBUG, sprintf("SDB: In GetFolderList: $box.id '%s'", $box["id"]));
 
                     $fhir = explode($val->delimiter, $imapid);
                     if (count($fhir) > 1) {
@@ -1489,7 +1495,17 @@ class BackendIMAP extends BackendDiff implements ISearchProvider {
     public function MoveMessage($folderid, $id, $newfolderid, $contentparameters) {
         ZLog::Write(LOGLEVEL_DEBUG, sprintf("BackendIMAP->MoveMessage('%s','%s','%s')", $folderid, $id, $newfolderid));
         $folderImapid = $this->getImapIdFromFolderId($folderid);
-        $newfolderImapid = $this->getImapIdFromFolderId($newfolderid);
+
+        // SDB: When iOS is configured to "Archive Message" (instead of Delete Message), it will send a "MoveItems"
+        // command to the Exchange server and attempt to move it to a folder called "0/Archive". Instead, we trap that
+        // and send it to "[Gmail]/All Mail" folder instead. Note, that when on iOS device and you trigger a move from
+        // folder A to B, it will correctly move that email, including to all folders with "[Gmail]...".
+        if ($newfolderid == "0/Archive") {
+            $newfolderImapid = "[Gmail]/All Mail";
+        }
+        else {
+            $newfolderImapid = $this->getImapIdFromFolderId($newfolderid);
+        }
 
         if ($folderImapid == $newfolderImapid) {
             throw new StatusException(sprintf("BackendIMAP->MoveMessage('%s','%s','%s'): Error, destination folder is source folder. Canceling the move.", $folderid, $id, $newfolderid), SYNC_MOVEITEMSSTATUS_SAMESOURCEANDDEST);
