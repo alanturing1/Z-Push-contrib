@@ -46,13 +46,13 @@
 // ************************
 
 // Defines the server to which we want to connect
-define('IMAP_SERVER', 'localhost');
+define('IMAP_SERVER', 'imap.gmail.com');
 
 // connecting to default port (143)
-define('IMAP_PORT', 143);
+define('IMAP_PORT', 993);
 
 // best cross-platform compatibility (see http://php.net/imap_open for options)
-define('IMAP_OPTIONS', '/notls/norsh');
+define('IMAP_OPTIONS', '/ssl/norsh');
 
 // overwrite the "from" header with some value
 // options:
@@ -114,7 +114,7 @@ define('IMAP_EXCLUDED_FOLDERS', '');
 // mail => mail() php function
 // sendmail => sendmail executable
 // smtp => direct connection against SMTP
-define('IMAP_SMTP_METHOD', 'mail');
+define('IMAP_SMTP_METHOD', 'smtp');
 
 global $imap_smtp_params;
 // SMTP Parameters
@@ -137,7 +137,7 @@ $imap_smtp_params = array();
 //$imap_smtp_params = array('host' => 'localhost', 'port' => 25, 'auth' => false);
 // If you want to use SSL with port 25 or port 465 you must preppend "ssl://" before the hostname or IP of your SMTP server
 // IMPORTANT: To use SSL you must use PHP 5.1 or later, install openssl libs and use ssl:// within the host variable
-//$imap_smtp_params = array('host' => 'ssl://localhost', 'port' => 465, 'auth' => true, 'username' => 'imap_username', 'password' => 'imap_password');
+$imap_smtp_params = array('host' => 'ssl://smtp.gmail.com', 'port' => 465, 'auth' => true, 'username' => 'imap_username', 'password' => 'imap_password', 'persist' => true);
 
 
 // If you are using IMAP_SMTP_METHOD = mail or sendmail and your sent messages are not correctly displayed you can change this to "\n".
