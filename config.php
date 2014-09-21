@@ -45,7 +45,7 @@
  *  Default settings
  */
     // Defines the default time zone, change e.g. to "Europe/London" if necessary
-    define('TIMEZONE', '');
+    define('TIMEZONE', 'America/Los_Angeles');
 
     // Defines the base path on the server
     define('BASE_PATH', dirname($_SERVER['SCRIPT_FILENAME']). '/');
@@ -68,7 +68,7 @@
      * false - use the username only (default).
      * true - use the complete email address.
      */
-    define('USE_FULLEMAIL_FOR_LOGIN', false);
+    define('USE_FULLEMAIL_FOR_LOGIN', true);
 
 /**********************************************************************************
  * Device pre-authorization. Useful when using Z-Push as a standalone product.
@@ -142,7 +142,7 @@
     define('LOGFILEDIR', '/var/log/z-push/');
     define('LOGFILE', LOGFILEDIR . 'z-push.log');
     define('LOGERRORFILE', LOGFILEDIR . 'z-push-error.log');
-    define('LOGLEVEL', LOGLEVEL_INFO);
+    define('LOGLEVEL', LOGLEVEL_DEBUG);
     define('LOGAUTHFAIL', false);
 
 
@@ -161,7 +161,7 @@
  *  Mobile settings
  */
     // Device Provisioning
-    define('PROVISIONING', true);
+    define('PROVISIONING', false);
 
     // This option allows the 'loose enforcement' of the provisioning policies for older
     // devices which don't support provisioning (like WM 5 and HTC Android Mail) - dw2412 contribution
@@ -252,7 +252,7 @@
  *  Backend settings
  */
     // the backend data provider
-    define('BACKEND_PROVIDER', '');
+    define('BACKEND_PROVIDER', 'BackendIMAP');
 
 /**********************************************************************************
  *  Search provider settings
